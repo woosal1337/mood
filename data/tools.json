@@ -1,0 +1,10 @@
+[
+  {
+    "slug": "deck-gallery",
+    "name": "Deck Gallery",
+    "host": "deck.gallery",
+    "url": "https://deck.gallery",
+    "note": "Curated presentation decks and brand guidelines",
+    "icon": "/icons/deck-gallery.webp"
+  }
+]
