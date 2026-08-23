@@ -6,5 +6,13 @@
     "url": "https://deck.gallery",
     "note": "Curated presentation decks and brand guidelines",
     "icon": "/icons/deck-gallery.webp"
+  },
+  {
+    "slug": "posts-design",
+    "name": "posts.design",
+    "host": "posts.design",
+    "url": "https://posts.design",
+    "note": "See what the best companies actually ship to their socials.",
+    "icon": "/icons/posts-design.webp"
   }
 ]
