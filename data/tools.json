@@ -22,5 +22,13 @@
     "url": "https://visualjournal.it",
     "note": "The best in Branding, Editorial and Graphic Design",
     "icon": "/icons/visualjournal-it.webp"
+  },
+  {
+    "slug": "inspora-design",
+    "name": "Inspora",
+    "host": "inspora.design",
+    "url": "https://www.inspora.design",
+    "note": "A curated archive of recent visual design and creative work.",
+    "icon": "/icons/inspora-design.webp"
   }
 ]
