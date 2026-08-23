@@ -14,5 +14,13 @@
     "url": "https://posts.design",
     "note": "See what the best companies actually ship to their socials.",
     "icon": "/icons/posts-design.webp"
+  },
+  {
+    "slug": "visualjournal-it",
+    "name": "Visual Journal",
+    "host": "visualjournal.it",
+    "url": "https://visualjournal.it",
+    "note": "The best in Branding, Editorial and Graphic Design",
+    "icon": "/icons/visualjournal-it.webp"
   }
 ]
