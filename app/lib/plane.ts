@@ -73,15 +73,15 @@ export type Tile = {
 export const MIN_ZOOM = 0.34;
 export const MAX_ZOOM = 4;
 
-export const OVERSCAN = 420;
+export const OVERSCAN = 300;
 
 /** Tiles have a constant size in world units, so the overscan must be capped in
  *  world units too. Left as pure screen pixels it divides by the zoom, and at
- *  the minimum zoom that margin grows to 1,500 world units around a 5,714-wide
- *  viewport — 2.8x the visible area mounted, two thirds of it off screen. */
-const MAX_PAD = 640;
+ *  the minimum zoom that margin grows to 880 world units around a 5,714-wide
+ *  viewport — most of the mounted set off screen. */
+const MAX_PAD = 560;
 
-const MAX_TILES = 560;
+const MAX_TILES = 760;
 
 export function buildPlane(items: Item[], colW: number, gap: number): Plane {
   const pitch = colW + gap;
@@ -230,8 +230,8 @@ export const fullOf = (id: string) => `${BASE}/media/${id}-full.webp`;
 export const videoOf = (id: string) => `${BASE}/media/video/${id}.mp4`;
 
 export function tierFor(devicePx: number, now: 0 | 1 | 2): 0 | 1 | 2 {
-  const up1 = 260, down1 = 210;
-  const up2 = 520, down2 = 430;
+  const up1 = 250, down1 = 200;
+  const up2 = 760, down2 = 620;
   if (now === 0) return devicePx > up1 ? (devicePx > up2 ? 2 : 1) : 0;
   if (now === 1) return devicePx > up2 ? 2 : devicePx < down1 ? 0 : 1;
   return devicePx < down1 ? 0 : devicePx < down2 ? 1 : 2;

@@ -61,9 +61,9 @@ it.
 
 | Tier | Width | Used when a tile is | Size on disk |
 |---|---|---|---|
-| tiny | 192px | below 260 device px | 7.6 MB total |
-| thumb | 480px | 260 to 520 device px | 23 MB total |
-| full | 1440px | above 520 device px | 169 MB total |
+| tiny | 192px | below 250 device px | 8.7 MB total |
+| thumb | 480px | 250 to 760 device px | 44 MB total |
+| full | 1440px | above 760 device px | 293 MB total |
 
 The smallest tier is not an optimization, it is a requirement. At the minimum
 zoom a tile is about 84 CSS pixels wide and about 520 of them are on screen.
@@ -79,6 +79,27 @@ They are also sticky. Once a tile earns a resolution it keeps it while it stays
 mounted, and the tier boundaries have a dead band around them. Both stop a slow
 zoom from throwing away decoded images it is about to ask for again.
 
+**The stack unstacks once it is covered.** Three live layers is three decoded
+bitmaps and three surfaces to composite, and the top one is opaque and sits at
+exactly the tile's aspect ratio. The two under it are paying for a picture
+nobody can see. So a layer that paints waits out the length of the fade, and
+then everything below it leaves. The zoom still never blanks, because the drop
+happens after the cover is on the screen and not before.
+
+**The boundary for the largest tier was wrong, and it cost the frame rate.**
+A 1440px file behind a tile 520 device pixels wide is 7.7 times the pixels the
+screen can use, and roughly 10 MB of decoded bitmap. The old rule engaged there,
+and at that zoom a wide monitor holds over a hundred tiles, so one screen asked
+the tab for more than a gigabyte of bitmap. It swapped, and then it crawled at
+one frame a second. The tier now waits for 760 device pixels. That leaves the
+480px file at most 1.6x out of its depth, which photographs carry, and it keeps
+the largest file for a zoom that has a use for it.
+
+**The play badge lost its blur.** It was a 22px circle with `backdrop-filter` on
+it, inside the layer that moves. Every video tile on the screen was a separate
+blur pass against a backdrop that changed every frame, for an effect nobody can
+read at that size. It is a flat disc now.
+
 ## 3. One transform per frame
 
 Input handlers change the camera and raise a flag. They never touch the DOM.
@@ -86,10 +107,65 @@ One `requestAnimationFrame` loop reads the camera, writes a single `transform`
 on the plane, and stops. A trackpad burst of forty wheel events per second
 becomes one style write per frame, and a pan never passes through React.
 
-The mounted set is recomputed only after the camera drifts 140 screen pixels,
-which the 420-pixel overscan margin covers. Tiles are keyed by their wrapped
-position, so a tile that stays on the screen keeps its DOM node and its decoded
-image across every recomputation.
+**React owns two divs, and the loop owns every tile.** The mounted set used to
+be React state, so each recomputation ran a reconciliation of a few hundred
+components inside the frame that also wrote the transform, and each image that
+finished loading set state on its own component. A pan at speed turned into a
+render storm. The tiles are plain DOM now, held in a pool that is keyed by
+wrapped position and diffed by hand: a tile that stays on the screen keeps its
+node and its decoded image, a tile that leaves gives its node to the next
+arrival, and nothing in the frame loop calls `setState`. React still draws the
+viewport, the plane and everything that is not the plane.
+
+**No input handler may measure.** `getBoundingClientRect` inside a wheel or
+pointer handler forces the engine to flush style and layout before it can
+answer, and at a hundred events a second, over a few hundred tiles, that is the
+whole budget. The viewport is `fixed inset-0`, so its origin is the origin, and
+`clientX` is already the number the handler wanted.
+
+The mounted set is recomputed after the camera drifts 64 screen pixels, which
+the 300-pixel overscan margin covers with room to spare. The margin is smaller
+than it was and the recomputation is more frequent, which is the right trade
+once a recomputation is a map diff rather than a render: the same tiles cross
+the boundary either way, and fewer of them sit mounted off screen in between.
+
+**Speed picks the resolution, and a fling gets none of it.** The plane knows
+every tile's aspect ratio from the payload, so the geometry is correct before a
+single byte of image arrives. Three bands:
+
+| Screen speed | A new tile gets |
+|---|---|
+| under 700 px/s | the tier the zoom asks for |
+| 700 to 2,600 px/s | the 192px file only |
+| over 2,600 px/s | nothing, only its grey box |
+
+The eye cannot resolve detail on content moving at 700 pixels a second, and a
+480px decode is roughly ninety times the texture upload of a 192px one. So the
+band pays nothing a viewer can see. The tier a tile holds never falls, so a
+picture already on the screen stays as sharp as it was. The loop recomputes on
+the first frame after the speed falls, and the wall sharpens in about 200 ms.
+
+Below 400 pixels a second the images also fade in. Above it they simply appear,
+because an opacity transition promotes a compositing layer, and fifty of those
+at once is a worse thing to look at than no fade at all.
+
+**`f` draws a frame meter.** Frame p50, p95 and worst over the last half second,
+plus the mounted tiles, the live images and their decoded bitmap. It is off
+until the key turns it on, so it obeys section 0.
+
+**The transform lands on a device pixel.** The camera is a float, so the plane
+transform is a float, and a composited layer at a fractional offset is resampled
+rather than copied. The loop rounds the translation to whole device pixels
+before it writes it. The error is a quarter of a CSS pixel at most, which nobody
+can see, and the wall stays sharp while it moves.
+
+**World coordinates are rebased, not accumulated.** A tile is positioned at its
+world coordinate, and the plane never reaches an edge, so a long session walks
+those numbers toward the point where a layout unit stops being exact. Every
+32,768 units the loop moves the origin to the camera, rewrites the mounted
+tiles against it, and takes the difference out of the plane transform. The
+picture does not move. The numbers stay small, and so do the bounds of the one
+composited layer.
 
 **The wheel listener cannot be React's.** React binds `wheel` passively, and a
 passive listener may not call `preventDefault`. Bound that way the page scrolls
