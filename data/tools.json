@@ -30,5 +30,13 @@
     "url": "https://www.inspora.design",
     "note": "A curated archive of recent visual design and creative work.",
     "icon": "/icons/inspora-design.webp"
+  },
+  {
+    "slug": "brandingstyleguides-com",
+    "name": "Branding Style Guides",
+    "host": "brandingstyleguides.com",
+    "url": "https://brandingstyleguides.com",
+    "note": "An archive of brand style guide documents from around the world.",
+    "icon": "/icons/brandingstyleguides-com.webp"
   }
 ]
