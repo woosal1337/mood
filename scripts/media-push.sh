@@ -1,35 +1,39 @@
 #!/usr/bin/env bash
-# Pushes public/media to the R2 bucket behind media.chele.bi.
+# Pushes public/media to the MinIO bucket behind media.chele.bi.
 #
 #     npm run media:push
 #
-# Needs rclone and four variables. Keep them out of this repo — read them from
+# The bucket lives on igris, in the Coolify project `media`. The S3 port
+# answers on the tailnet only, so you must be on the tailnet to run this.
+#
+# Needs rclone and three variables. Keep them out of this repo — read them from
 # your secret store and export them for the one command:
 #
-#     R2_ACCOUNT_ID  R2_ACCESS_KEY_ID  R2_SECRET_ACCESS_KEY  R2_BUCKET
+#     S3_ENDPOINT  S3_ACCESS_KEY_ID  S3_SECRET_ACCESS_KEY
 #
 # The copy is incremental, so re-running after adding a few images moves only
 # those images.
 set -euo pipefail
 
-: "${R2_ACCOUNT_ID:?set R2_ACCOUNT_ID}"
-: "${R2_ACCESS_KEY_ID:?set R2_ACCESS_KEY_ID}"
-: "${R2_SECRET_ACCESS_KEY:?set R2_SECRET_ACCESS_KEY}"
-BUCKET="${R2_BUCKET:-mood-media}"
+: "${S3_ENDPOINT:?set S3_ENDPOINT}"
+: "${S3_ACCESS_KEY_ID:?set S3_ACCESS_KEY_ID}"
+: "${S3_SECRET_ACCESS_KEY:?set S3_SECRET_ACCESS_KEY}"
+BUCKET="${S3_BUCKET:-moodboard-media}"
 
 cd "$(dirname "$0")/.."
 
-export RCLONE_CONFIG_R2_TYPE=s3
-export RCLONE_CONFIG_R2_PROVIDER=Cloudflare
-export RCLONE_CONFIG_R2_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID"
-export RCLONE_CONFIG_R2_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
-export RCLONE_CONFIG_R2_ENDPOINT="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
-export RCLONE_CONFIG_R2_NO_CHECK_BUCKET=true
+export RCLONE_CONFIG_MEDIA_TYPE=s3
+export RCLONE_CONFIG_MEDIA_PROVIDER=Minio
+export RCLONE_CONFIG_MEDIA_ACCESS_KEY_ID="$S3_ACCESS_KEY_ID"
+export RCLONE_CONFIG_MEDIA_SECRET_ACCESS_KEY="$S3_SECRET_ACCESS_KEY"
+export RCLONE_CONFIG_MEDIA_ENDPOINT="$S3_ENDPOINT"
+export RCLONE_CONFIG_MEDIA_REGION=us-east-1
+export RCLONE_CONFIG_MEDIA_FORCE_PATH_STYLE=true
 
-echo "▸ pushing public/media → r2:${BUCKET}/media"
-rclone copy public/media "r2:${BUCKET}/media" \
+echo "▸ pushing public/media → media:${BUCKET}/media"
+rclone copy public/media "media:${BUCKET}/media" \
   --transfers 48 --checkers 48 --s3-chunk-size 16M \
   --stats 20s --stats-one-line
 
 echo "▸ verifying"
-rclone check public/media "r2:${BUCKET}/media" --size-only --one-way 2>&1 | tail -2
+rclone check public/media "media:${BUCKET}/media" --size-only --one-way 2>&1 | tail -2

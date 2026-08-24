@@ -7,7 +7,7 @@ out/
 .cache/
 data/.boards.lock
 
-# Media lives in Cloudflare R2, served from media.chele.bi.
+# Media lives in MinIO on igris, served from media.chele.bi.
 # Kept on disk so `npm run dev` and the ingest scripts work locally, but out of
 # git: 419 MB of it will not fit in a Vercel deployment, and a repo that clones
 # half a gigabyte to build a 1.6 MB site is paying for nothing.

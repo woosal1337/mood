@@ -22,7 +22,7 @@ Images and video from designers, studios and galleries, laid out on a plane that
 - Next.js 16 (App Router), React 19, TypeScript, static export
 - Tailwind CSS 4 with a zero-chroma token layer in `app/globals.css`
 - Switzer and JetBrains Mono, self-hosted
-- Media on Cloudflare R2, served from `media.chele.bi`
+- Media on MinIO, self-hosted on igris, served from `media.chele.bi`
 - Deployed on Vercel
 
 No server, no database, no client-side dependency beyond React.
@@ -48,7 +48,7 @@ NEXT_PUBLIC_MEDIA_BASE=https://media.chele.bi npm run dev
 - `npm run ingest` — add files dropped in `media/incoming/`
 - `npm run tool <url>` — add a site to the rail
 - `npm run sheets` — contact sheets of everything, for review
-- `npm run media:push` — sync `public/media/` to R2
+- `npm run media:push` — sync `public/media/` to the media bucket
 
 ## How it is put together
 
