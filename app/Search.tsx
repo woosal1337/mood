@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { OA_EVENTS, track } from "./lib/analytics";
 import { type Deck, thumbOf } from "./lib/plane";
 
 type Props = {
@@ -37,6 +38,23 @@ export default function Search({ deck, onMatch, onGo, onClose }: Props) {
     onMatch(hits ? new Set(hits) : null);
   }, [hits, onMatch]);
 
+  /*
+   * One event per settled query, not one per keystroke.
+   *
+   * The 600 ms wait is what makes the report readable: without it "refik"
+   * arrives as five separate searches, four of them prefixes nobody meant to
+   * type, and the miss rate reads far worse than it is.
+   */
+  useEffect(() => {
+    const needle = q.trim();
+    if (needle === "") return;
+    const t = setTimeout(
+      () => track(OA_EVENTS.searchRun, { query: needle.toLowerCase(), hits: hits?.length ?? 0 }),
+      600
+    );
+    return () => clearTimeout(t);
+  }, [q, hits]);
+
   useEffect(() => {
     input.current?.focus();
   }, []);
@@ -44,6 +62,7 @@ export default function Search({ deck, onMatch, onGo, onClose }: Props) {
   useEffect(() => setCursor(0), [q]);
 
   const go = (i: number) => {
+    track(OA_EVENTS.searchGo, { query: q.trim().toLowerCase(), id: deck.items[i].id });
     onGo(i);
     setCursor(hits ? hits.indexOf(i) : 0);
   };

@@ -5,6 +5,7 @@ import Canvas, { type CanvasHandle } from "./Canvas";
 import Search from "./Search";
 import Tools from "./Tools";
 import Viewer from "./Viewer";
+import { OA_EVENTS, track } from "./lib/analytics";
 import { buildPlane, type Deck } from "./lib/plane";
 
 const COL_W = 300;
@@ -62,6 +63,7 @@ export default function Mood() {
       if (e.key === "/" || ((e.metaKey || e.ctrlKey) && e.key === "k")) {
         e.preventDefault();
         setSearching(true);
+        track(OA_EVENTS.searchOpen, { key: e.key === "/" ? "slash" : "mod-k" });
       } else if (e.key === "Escape" && searching) {
         e.preventDefault();
         closeSearch();
@@ -69,28 +71,46 @@ export default function Mood() {
         toggleTheme();
       } else if (e.key === "0" || e.key === "h") {
         canvas.current?.home();
+        track(OA_EVENTS.planeHome, { key: e.key });
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [view, searching, closeSearch]);
 
-  const onOpen = useCallback((item: number, rect: DOMRect) => {
-    setView({ item, rect });
-    setHint(false);
-  }, []);
-
-  const step = useCallback(
-    (d: number) =>
-      setView((v) => {
-        if (!v || !deck) return v;
-        const n = deck.items.length;
-        return { ...v, item: (v.item + d + n) % n };
-      }),
+  const onOpen = useCallback(
+    (item: number, rect: DOMRect) => {
+      setView({ item, rect });
+      setHint(false);
+      if (deck) track(OA_EVENTS.imageOpen, describe(deck, item));
+    },
     [deck]
   );
 
-  const pick = useCallback((item: number) => setView((v) => (v ? { ...v, item } : v)), []);
+  // Reads `view` rather than taking the updater form: the event has to be sent
+  // outside the updater, because React may call an updater twice and would
+  // count the step twice with it.
+  const step = useCallback(
+    (d: number) => {
+      if (!deck || !view) return;
+      const n = deck.items.length;
+      const item = (view.item + d + n) % n;
+      track(OA_EVENTS.imageStep, {
+        direction: d > 0 ? "next" : "previous",
+        ...describe(deck, item),
+      });
+      setView({ ...view, item });
+    },
+    [deck, view]
+  );
+
+  const pick = useCallback(
+    (item: number) => {
+      if (deck) track(OA_EVENTS.imagePick, describe(deck, item));
+      setView((v) => (v ? { ...v, item } : v));
+    },
+    [deck]
+  );
 
   const flyTo = useCallback((item: number) => canvas.current?.flyTo(item), []);
 
@@ -188,11 +208,31 @@ function toggleTheme() {
   const dark = now ? now === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
   const next = dark ? "light" : "dark";
   root.dataset.theme = next;
+  track(OA_EVENTS.themeToggle, { theme: next });
   try {
     localStorage.setItem("mood.theme", next);
   } catch {
   }
 }
+
+/**
+ * The properties every image event carries.
+ *
+ * The id, the author and the kind — never the board text. The text is a whole
+ * post and would blow past the tracker's 256-character property cap, and the
+ * question these events answer is "which images and whose work get opened".
+ */
+function describe(deck: Deck, item: number) {
+  const media = deck.items[item];
+  const board = deck.boards[media.board];
+  return {
+    id: media.id,
+    author: board?.author ?? "",
+    kind: KIND[media.kind],
+  };
+}
+
+const KIND = ["image", "video", "poster"] as const;
 
 function decode(raw: Raw): Deck {
   return {

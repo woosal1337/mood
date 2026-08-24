@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { OA_COLLECTOR_URL, OA_TRACKING_KEY } from "./lib/analytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -54,6 +55,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        {/*
+         * Self-hosted Open Analytics. It patches the history API, reports Core
+         * Web Vitals on the first hidden and records engagement without help,
+         * so the plane needs no code for any of that. What it cannot see is the
+         * plane itself — see lib/analytics.ts for the named events.
+         *
+         * The key is public and write-only.
+         */}
+        <script
+          async
+          src={`${OA_COLLECTOR_URL}/oa.js`}
+          data-key={OA_TRACKING_KEY}
+          data-collector={OA_COLLECTOR_URL}
+        />
       </head>
       <body>{children}</body>
     </html>

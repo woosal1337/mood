@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { OA_EVENTS, eventProps, linkHost, track } from "./lib/analytics";
 import { type Deck, fullOf, thumbOf, videoOf } from "./lib/plane";
 
 const MORPH_MS = 420;
@@ -154,6 +155,13 @@ export default function Viewer({ deck, item, from, onClose, onStep, onPick }: Pr
             loop
             playsInline
             onClick={(e) => e.stopPropagation()}
+            /*
+             * Playback started, which is not the same as the video opening.
+             * The element asks to autoplay with sound, and a browser refuses
+             * that on most phones — so this event minus the `video` share of
+             * image_open is how often autoplay was blocked.
+             */
+            onPlay={() => track(OA_EVENTS.videoPlay, { id: media.id, author: board?.author ?? "" })}
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", background: "#000" }}
           />
         )}
@@ -325,6 +333,10 @@ function Chrome({
               href={board.url}
               target="_blank"
               rel="noreferrer noopener"
+              {...eventProps(OA_EVENTS.boardSource, {
+                author: board.author,
+                host: linkHost(board.url),
+              })}
               style={{ color: "rgb(255 255 255 / 0.75)", textDecoration: "none", borderBottom: "1px solid rgb(255 255 255 / 0.28)" }}
             >
               source

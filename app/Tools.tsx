@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { OA_EVENTS, eventProps, linkHost, track } from "./lib/analytics";
 import tools from "../data/tools.json";
 
 type Tool = { slug: string; name: string; host: string; url: string; note: string; icon: string };
@@ -59,7 +60,12 @@ export default function Tools() {
     >
       <button
         className="rail-tab"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          // Outside the updater on purpose: React may call an updater twice,
+          // and an event sent from in there would be counted twice with it.
+          track(OA_EVENTS.toolsToggle, { state: open ? "closed" : "open", from: "tab" });
+          setOpen(!open);
+        }}
         aria-expanded={open}
         aria-label={open ? "Close MVP" : `Open MVP (${list.length})`}
         title={open ? "Close" : "MVP"}
@@ -76,7 +82,14 @@ export default function Tools() {
         <div className="rail-head">
           <span className="eyebrow">mvp</span>
           <span className="tnum rail-count">{list.length}</span>
-          <button className="rail-x" onClick={() => setOpen(false)} aria-label="Close MVP">
+          <button
+            className="rail-x"
+            onClick={() => {
+              track(OA_EVENTS.toolsToggle, { state: "closed", from: "x" });
+              setOpen(false);
+            }}
+            aria-label="Close MVP"
+          >
             <svg width="9" height="9" viewBox="0 0 9 9" aria-hidden>
               <path d="M1 1l7 7M8 1l-7 7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
             </svg>
@@ -86,7 +99,13 @@ export default function Tools() {
         <ul className="rail-list scroll-area">
           {list.map((t, i) => (
             <li key={t.slug} style={{ ["--i" as string]: i }}>
-              <a href={t.url} target="_blank" rel="noreferrer noopener" title={t.note || t.host}>
+              <a
+                href={t.url}
+                target="_blank"
+                rel="noreferrer noopener"
+                title={t.note || t.host}
+                {...eventProps(OA_EVENTS.toolOpen, { tool: t.slug, host: linkHost(t.url) })}
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={t.icon} alt="" width={26} height={26} loading="lazy" />
                 <span className="rail-text">
