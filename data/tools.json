@@ -38,5 +38,13 @@
     "url": "https://brandingstyleguides.com",
     "note": "An archive of brand style guide documents from around the world.",
     "icon": "/icons/brandingstyleguides-com.webp"
+  },
+  {
+    "slug": "logosystem-co",
+    "name": "Logosystem",
+    "host": "logosystem.co",
+    "url": "https://logosystem.co",
+    "note": "A library of logos and animated logos, filtered by colour, style and shape.",
+    "icon": "/icons/logosystem-co.webp"
   }
 ]
