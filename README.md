@@ -10,7 +10,8 @@ Images and video from designers, studios and galleries, laid out on a plane that
 
 ## Highlights
 
-- Infinite in all four directions. One block of columns addressed with modular arithmetic, each wrapping on its own height and phase, so no repeat ever lines up into a seam.
+- Infinite in all four directions. One block of justified rows addressed with modular arithmetic, each wrapping on its own width and phase, so no repeat ever lines up into a seam.
+- Two views on one plane, switched with `v`. Infinity is a justified mosaic. Grid is equal squares, neatly aligned.
 - Three resolutions per image (192px, 480px, 1440px) that stack rather than swap, so a zoom never blanks a tile.
 - One `requestAnimationFrame` loop owns the transform. Input never touches the DOM, so a pan costs one composited layer move.
 - The viewer grows out of the tile you clicked, and `object-fit` never changes during the move.

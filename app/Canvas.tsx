@@ -214,7 +214,7 @@ export default forwardRef<CanvasHandle, Props>(function Canvas(
       const { w, h } = size.current;
       if (!w || !h) return;
 
-      const tier = tierFor(plane.colW * c.z * dpr, tierRef.current);
+      const tier = tierFor(plane.unit * c.z * dpr, tierRef.current);
       const serve = speed >= LOAD_MAX ? -1 : speed > COARSE ? 0 : tier;
 
       const drifted =

@@ -39,6 +39,7 @@ export const OA_EVENTS = {
   toolsToggle: "tools_toggle",
   toolOpen: "tool_open",
   themeToggle: "theme_toggle",
+  viewSwitch: "view_switch",
 } as const;
 
 /**

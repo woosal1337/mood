@@ -31,24 +31,36 @@ catalogue, and this opens on a wall.
 
 ## 1. The infinite plane
 
-It is not infinite. It is one block of columns, addressed with modular
-arithmetic, so panning past its edge lands you back inside it. Nothing is
-generated and nothing is destroyed. Only the map from world coordinate to tile
-wraps around.
+It is not infinite. It is one block of rows, addressed with modular arithmetic,
+so panning past its edge lands you back inside it. Nothing is generated and
+nothing is destroyed. Only the map from world coordinate to tile wraps around.
 
-**Each column wraps on its own height, and that is the whole trick.** A plane
-that wrapped as one rectangle would repeat every tile at the same world `y`, and
-the eye reads a row of simultaneous repeats as a seam across the full width of
-the screen. Here each column also starts at its own phase offset, so no column's
-repeat lines up with its neighbors'. The plane has a period. It has no visible
-edge anywhere in it.
+**Each row wraps on its own width, and that is the whole trick.** A plane that
+wrapped as one rectangle would repeat every tile at the same world `x`, and the
+eye reads a column of simultaneous repeats as a seam down the full height of the
+screen. Here each row also starts at its own phase offset, so no row's repeat
+lines up with the rows above and below it. The plane has a period. It has no
+visible edge anywhere in it.
 
-**The column count is derived, not chosen.** Total tile area is fixed by the
-media, so a count really picks the *shape* of the repeating block: a few tall
-columns, or many short ones. A block shaped like the screen takes longest to
-repeat in either axis, so the count solves for a 16:9 block —
-`n = sqrt(16·T / 9·pitch)`, where `T` is the summed height of every tile at this
-column width. With this media that gives 49 columns.
+The layout was columns until 2026-08-29. Columns wrap vertically and leave a
+ragged gutter down each side of a tile, because a column is one fixed width and
+the tiles inside it are not. Rows carry the dual property and lose the gutter: a
+row is justified, so its tiles fill the width exactly, and the block reads as a
+mosaic rather than a set of stacks. The wrap guarantee is the same one, rotated
+90 degrees.
+
+**A row is justified, not packed.** Every tile in a row is scaled to one shared
+height, and that height is whatever makes the row exactly as wide as the block.
+The last tile in a row takes the remaining pixels, so rounding never leaves a
+sliver at the right edge — which would show as a bright seam every time the row
+repeats.
+
+**The block width is derived, not chosen.** Total tile area is fixed by the
+media, so a width really picks the *shape* of the repeating block: a few wide
+rows, or many narrow ones. A block shaped like the screen takes longest to
+repeat in either axis, so the width solves for 16:9 —
+`W = sqrt(16·R·(unit + gap) / 9)`, where `R` is the summed width of every tile
+at the target row height.
 
 **The order is shuffled, with a fixed seed.** The source groups the four images
 of one post together, which on a grid reads as a repeated set of near-identical
@@ -56,6 +68,22 @@ tiles. Shuffled, it reads as a mood. The viewer puts each image back beside
 its siblings, so the grouping is not lost — only unstacked. The seed is fixed
 because a reload must not reshuffle the plane under someone who is navigating
 it.
+
+## 1a. Two views, one wrap
+
+`v` switches the plane between two views. Both are rows, so both share one
+`visible()` and one frame loop. Only the packing differs.
+
+**Infinity** justifies each row to the block width, with a 6px gap. Tile heights
+vary by row. Each row takes a random phase, so nothing lines up.
+
+**Grid** puts equal squares in every row, with a 10px gap and no phase. A grid
+that offset its rows would not read as a grid. The repeat is visible in this
+view, and that is correct: a grid is a regular thing, and pretending otherwise
+would cost the alignment that makes it worth having.
+
+Neither view is a mode with its own state. The camera, the tier ladder, the
+search dim and the viewer do not know which one is on screen.
 
 ## 2. Three resolutions, one per distance
 
@@ -273,9 +301,22 @@ was no stored path anywhere to migrate.
 
 Taken unchanged from `design-index`, and the reasons come with them.
 
-Zero chroma. `R=G=B` in every value. Light mode separates surfaces by **line**,
-dark mode separates them by **fill**, and the dark alphas are about half the
-light ones, because `L*` moves roughly twice as fast per unit alpha near black.
+Near-zero chroma. `R=G=B` in every value but one. Light mode separates surfaces
+by **line**, dark mode separates them by **fill**, and the dark alphas are about
+half the light ones, because `L*` moves roughly twice as fast per unit alpha
+near black.
+
+The one saturated value is `--accent`, `rgb(255 91 3)`, taken from Atlas.
+Nothing on the plane uses it. It is reserved for a state the page cannot express
+with gray alone.
+
+**Dark is the default, and light is a choice.** The page used to follow the OS.
+That is defensible and it was wrong here: the plane is a wall of other people's
+images, and a white ground competes with every one of them. The `T` key still
+flips it, and the choice still lives in `localStorage` under `mood.theme`.
+`prefers-color-scheme` is no longer read at all, so a light OS no longer serves a
+light page to someone who never asked for one.
+
 Never `#000` or `#fff` — 21:1 blooms on OLED and on cheap IPS panels.
 
 Two exceptions, both because this product paints over photographs:
@@ -285,10 +326,10 @@ Two exceptions, both because this product paints over photographs:
 - **The viewer's own text is white in both themes**, because it sits on the
   scrim and not on the page.
 
-`color-scheme` tracks the theme in three states, in the same order as the
-tokens. `light dark` alone only declares that the page supports both, after
-which the browser paints scrollbars and form controls from
-`prefers-color-scheme` and never looks at `data-theme`.
+`color-scheme` tracks the theme in two states, in the same order as the tokens:
+`dark` on the root, `light` under `[data-theme="light"]`. `light dark` alone only
+declares that the page supports both, after which the browser paints scrollbars
+and form controls from `prefers-color-scheme` and never looks at `data-theme`.
 
 ## 7. Type
 

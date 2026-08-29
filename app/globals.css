@@ -7,7 +7,53 @@
 @font-face { font-family:"JetBrains Mono"; src:url("/fonts/jetbrains-mono-400.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
 @font-face { font-family:"JetBrains Mono"; src:url("/fonts/jetbrains-mono-500.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; }
 
+/* Dark is the default. Light is a choice, made with the T key. */
 :root {
+  --ink: 255 255 255;
+  --paper: 17 17 17;
+  --accent: 255 91 3;
+
+  --s-1: rgb(0 0 0 / 0.45);
+  --s-2: rgb(var(--ink) / 0.035);
+  --s-3: rgb(var(--ink) / 0.060);
+  --s-4: rgb(var(--ink) / 0.084);
+  --s-5: rgb(var(--ink) / 0.113);
+
+  --line-faint: rgb(var(--ink) / 0.08);
+  --line: rgb(var(--ink) / 0.14);
+  --line-strong: rgb(var(--ink) / 0.22);
+  --line-hard: rgb(var(--ink) / 0.34);
+
+  --fg: rgb(var(--ink) / 0.90);
+  --fg-2: rgb(var(--ink) / 0.70);
+  --fg-3: rgb(var(--ink) / 0.30);
+  --fg-4: rgb(var(--ink) / 0.22);
+
+  --page: rgb(var(--paper));
+
+  --overlay: #1a1a1a;
+  --overlay-line: rgb(var(--ink) / 0.18);
+  --shadow-overlay: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -14px rgb(0 0 0 / 0.5);
+
+  --scrim: rgb(8 8 8 / 0.94);
+
+  --glass: rgb(26 26 26 / 0.64);
+  --glass-line: rgb(255 255 255 / 0.11);
+  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 0.13);
+  --glass-blur: blur(36px) saturate(175%) brightness(1.06);
+  --shadow-glass: 0 1px 2px rgb(0 0 0 / 0.45), 0 14px 36px -12px rgb(0 0 0 / 0.6);
+
+  --radius: 12px;
+
+  --dur-micro: 80ms;
+  --dur-move: 160ms;
+  --dur-enter: 240ms;
+  --dur-page: 320ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root[data-theme="light"] {
   --ink: 0 0 0;
   --paper: 255 255 255;
 
@@ -22,89 +68,20 @@
   --line-strong: rgb(var(--ink) / 0.16);
   --line-hard: rgb(var(--ink) / 0.28);
 
-  --fg: rgb(var(--ink) / 0.92);
-  --fg-2: rgb(var(--ink) / 0.68);
-  --fg-3: rgb(var(--ink) / 0.56);
-  --fg-4: rgb(var(--ink) / 0.44);
-
-  --page: rgb(var(--paper));
+  --fg: rgb(var(--ink) / 0.90);
+  --fg-2: rgb(var(--ink) / 0.70);
+  --fg-3: rgb(var(--ink) / 0.30);
+  --fg-4: rgb(var(--ink) / 0.22);
 
   --overlay: #ffffff;
   --overlay-line: rgb(var(--ink) / 0.14);
   --shadow-overlay: 0 1px 1px rgb(0 0 0 / 0.04), 0 8px 24px -6px rgb(0 0 0 / 0.12);
 
-  --scrim: rgb(8 8 8 / 0.94);
-
-  --glass: rgb(255 255 255 / 0.72);
+  --glass: rgb(245 245 245 / 0.72);
   --glass-line: rgb(255 255 255 / 0.65);
   --glass-edge: inset 0 1px 0 rgb(255 255 255 / 0.75);
   --glass-blur: blur(34px) saturate(190%);
   --shadow-glass: 0 1px 2px rgb(0 0 0 / 0.05), 0 12px 32px -10px rgb(0 0 0 / 0.22);
-
-  --radius: 12px;
-
-  --dur-micro: 80ms;
-  --dur-move: 160ms;
-  --dur-enter: 240ms;
-  --dur-page: 320ms;
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ink: 255 255 255;
-    --paper: 10 10 10;
-    --s-1: rgb(0 0 0 / 0.45);
-    --s-2: rgb(var(--ink) / 0.035);
-    --s-3: rgb(var(--ink) / 0.060);
-    --s-4: rgb(var(--ink) / 0.084);
-    --s-5: rgb(var(--ink) / 0.113);
-    --line-faint: rgb(var(--ink) / 0.08);
-    --line: rgb(var(--ink) / 0.14);
-    --line-strong: rgb(var(--ink) / 0.22);
-    --line-hard: rgb(var(--ink) / 0.34);
-    --fg: rgb(var(--ink) / 0.93);
-    --fg-2: rgb(var(--ink) / 0.72);
-    --fg-3: rgb(var(--ink) / 0.50);
-    --fg-4: rgb(var(--ink) / 0.38);
-    --page: rgb(var(--paper));
-    --overlay: #151515;
-    --overlay-line: rgb(var(--ink) / 0.18);
-    --shadow-overlay: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -14px rgb(0 0 0 / 0.5);
-    --glass: rgb(28 28 28 / 0.64);
-    --glass-line: rgb(255 255 255 / 0.11);
-    --glass-edge: inset 0 1px 0 rgb(255 255 255 / 0.13);
-    --glass-blur: blur(36px) saturate(175%) brightness(1.06);
-    --shadow-glass: 0 1px 2px rgb(0 0 0 / 0.45), 0 14px 36px -12px rgb(0 0 0 / 0.6);
-  }
-}
-
-:root[data-theme="dark"] {
-  --ink: 255 255 255;
-  --paper: 10 10 10;
-  --s-1: rgb(0 0 0 / 0.45);
-  --s-2: rgb(var(--ink) / 0.035);
-  --s-3: rgb(var(--ink) / 0.060);
-  --s-4: rgb(var(--ink) / 0.084);
-  --s-5: rgb(var(--ink) / 0.113);
-  --line-faint: rgb(var(--ink) / 0.08);
-  --line: rgb(var(--ink) / 0.14);
-  --line-strong: rgb(var(--ink) / 0.22);
-  --line-hard: rgb(var(--ink) / 0.34);
-  --fg: rgb(var(--ink) / 0.93);
-  --fg-2: rgb(var(--ink) / 0.72);
-  --fg-3: rgb(var(--ink) / 0.50);
-  --fg-4: rgb(var(--ink) / 0.38);
-  --page: rgb(var(--paper));
-  --overlay: #151515;
-  --overlay-line: rgb(var(--ink) / 0.18);
-  --shadow-overlay: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 20px -14px rgb(0 0 0 / 0.5);
-  --glass: rgb(28 28 28 / 0.64);
-  --glass-line: rgb(255 255 255 / 0.11);
-  --glass-edge: inset 0 1px 0 rgb(255 255 255 / 0.13);
-  --glass-blur: blur(36px) saturate(175%) brightness(1.06);
-  --shadow-glass: 0 1px 2px rgb(0 0 0 / 0.45), 0 14px 36px -12px rgb(0 0 0 / 0.6);
 }
 
 @theme inline {
@@ -124,6 +101,7 @@
   --color-line-hard: var(--line-hard);
   --color-overlay: var(--overlay);
   --color-overlay-line: var(--overlay-line);
+  --color-accent: rgb(var(--accent));
 
   --font-sans: "Switzer", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
@@ -131,11 +109,7 @@
 
 * { border-color: var(--line); }
 
-:root { color-scheme: light; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { color-scheme: dark; }
-}
-:root[data-theme="dark"] { color-scheme: dark; }
+:root { color-scheme: dark; }
 :root[data-theme="light"] { color-scheme: light; }
 
 html, body {

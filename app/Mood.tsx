@@ -6,10 +6,14 @@ import Search from "./Search";
 import Tools from "./Tools";
 import Viewer from "./Viewer";
 import { OA_EVENTS, track } from "./lib/analytics";
-import { buildPlane, type Deck } from "./lib/plane";
+import { MODES, buildPlane, type Deck, type Mode } from "./lib/plane";
 
-const COL_W = 300;
-const GAP = 14;
+const SHAPE: Record<Mode, { unit: number; gap: number }> = {
+  infinity: { unit: 260, gap: 6 },
+  grid: { unit: 220, gap: 10 },
+};
+
+const MODE_KEY = "mood.view";
 
 type Raw = {
   counts: Deck["counts"];
@@ -24,6 +28,7 @@ export default function Mood() {
   const [searching, setSearching] = useState(false);
   const [match, setMatch] = useState<Set<number> | null>(null);
   const [hint, setHint] = useState(true);
+  const [mode, setMode] = useState<Mode>("infinity");
 
   const canvas = useRef<CanvasHandle>(null);
 
@@ -38,10 +43,30 @@ export default function Mood() {
     };
   }, []);
 
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(MODE_KEY);
+      if (saved && (MODES as string[]).includes(saved)) setMode(saved as Mode);
+    } catch {
+    }
+  }, []);
+
   const plane = useMemo(
-    () => (deck ? buildPlane(deck.items, COL_W, GAP) : null),
-    [deck]
+    () => (deck ? buildPlane(deck.items, SHAPE[mode].unit, SHAPE[mode].gap, mode) : null),
+    [deck, mode]
   );
+
+  const cycle = useCallback(() => {
+    setMode((now) => {
+      const next = MODES[(MODES.indexOf(now) + 1) % MODES.length];
+      try {
+        localStorage.setItem(MODE_KEY, next);
+      } catch {
+      }
+      track(OA_EVENTS.viewSwitch, { view: next });
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setHint(false), 7000);
@@ -69,6 +94,8 @@ export default function Mood() {
         closeSearch();
       } else if (e.key === "t" || e.key === "T") {
         toggleTheme();
+      } else if (e.key === "v" || e.key === "V") {
+        cycle();
       } else if (e.key === "0" || e.key === "h") {
         canvas.current?.home();
         track(OA_EVENTS.planeHome, { key: e.key });
@@ -76,7 +103,7 @@ export default function Mood() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [view, searching, closeSearch]);
+  }, [view, searching, closeSearch, cycle]);
 
   const onOpen = useCallback(
     (item: number, rect: DOMRect) => {
@@ -159,12 +186,12 @@ export default function Mood() {
 
       <Tools />
 
-      <Hint show={hint && !view && !searching} counts={deck.counts} />
+      <Hint show={hint && !view && !searching} counts={deck.counts} mode={mode} />
     </main>
   );
 }
 
-function Hint({ show, counts }: { show: boolean; counts: Deck["counts"] }) {
+function Hint({ show, counts, mode }: { show: boolean; counts: Deck["counts"]; mode: Mode }) {
   return (
     <div
       aria-hidden={!show}
@@ -196,7 +223,7 @@ function Hint({ show, counts }: { show: boolean; counts: Deck["counts"] }) {
       >
         <span className="tnum">{counts.items.toLocaleString()}</span> images ·{" "}
         <span className="tnum">{counts.videos}</span> videos · drag to move · pinch or ⌘scroll to
-        zoom · <kbd>/</kbd> to search
+        zoom · <kbd>/</kbd> to search · <kbd>v</kbd> for {mode === "grid" ? "infinity" : "grid"}
       </p>
     </div>
   );
@@ -205,7 +232,7 @@ function Hint({ show, counts }: { show: boolean; counts: Deck["counts"] }) {
 function toggleTheme() {
   const root = document.documentElement;
   const now = root.dataset.theme;
-  const dark = now ? now === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const dark = now !== "light";
   const next = dark ? "light" : "dark";
   root.dataset.theme = next;
   track(OA_EVENTS.themeToggle, { theme: next });
