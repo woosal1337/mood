@@ -407,7 +407,7 @@ input:focus-visible { outline: none; }
 .nav {
   position: fixed;
   top: 10px;
-  left: 10px;
+  left: var(--nav-left, 64px);
   right: 10px;
   z-index: 40;
 
@@ -416,7 +416,7 @@ input:focus-visible { outline: none; }
   gap: 18px;
 
   height: 46px;
-  padding: 0 8px 0 62px;
+  padding: 0 8px 0 16px;
   border-radius: var(--radius);
 
   opacity: 0;
@@ -424,7 +424,8 @@ input:focus-visible { outline: none; }
   pointer-events: none;
   transition:
     opacity var(--dur-move) var(--ease-standard),
-    transform var(--dur-move) var(--ease-standard);
+    transform var(--dur-move) var(--ease-standard),
+    left var(--dur-page) var(--ease-out-expo);
 }
 
 .nav[data-show] {

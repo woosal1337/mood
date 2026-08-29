@@ -28,17 +28,17 @@ export default function Nav({ counts, mode, onMode, onSearch, rest, railOpen }: 
   }, []);
 
   return (
-    <nav className="nav glass-surface" data-show={rest || near || undefined}>
-      {!railOpen && (
-        <>
-          <span className="nav-mark">mood.</span>
+    <nav
+      className="nav glass-surface"
+      data-show={rest || near || undefined}
+      style={{ ["--nav-left" as string]: railOpen ? "272px" : "64px" }}
+    >
+      <span className="nav-mark">mood.</span>
 
-          <span className="nav-strap">
-            <span className="nav-lead">Two ways to look.</span> Grid for scanning.
-            Infinity for losing yourself in it.
-          </span>
-        </>
-      )}
+      <span className="nav-strap">
+        <span className="nav-lead">Two ways to look.</span> Grid for scanning.
+        Infinity for losing yourself in it.
+      </span>
 
       <span className="nav-right">
         <span className="nav-seg" role="group" aria-label="View">

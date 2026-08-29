@@ -297,6 +297,13 @@ It carries the wordmark, the strap, the view switch, search, the count and one
 link. The view switch is the only new control, and `v` does the same job without
 it, which is the rule: a feature earns a control only after it has a key.
 
+**It never touches the rail.** Both live in the top-left corner, so the nav
+starts where the rail ends: 64px while the rail is a 38px tab, 272px while the
+open panel is 246px wide. The two widths animate on the same curve, so nothing
+overlaps in flight either. The nav also sits below the rail in the stack, which
+means a mistake in that arithmetic costs a hidden wordmark and never a dead
+link.
+
 **The strap is two-tone.** The lead sentence sits at 0.90 and the rest at 0.30,
 which is the Atlas heading treatment. One sentence states the thing, the rest
 explains it and gets out of the way. The hint line at the bottom uses the same
