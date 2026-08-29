@@ -46,5 +46,37 @@
     "url": "https://logosystem.co",
     "note": "A library of logos and animated logos, filtered by colour, style and shape.",
     "icon": "/icons/logosystem-co.webp"
+  },
+  {
+    "slug": "letterformarchive-org",
+    "name": "Letterform Archive",
+    "host": "letterformarchive.org",
+    "url": "https://letterformarchive.org",
+    "note": "A nonprofit archive of graphic design and typography, scanned very close.",
+    "icon": "/icons/letterformarchive-org.webp"
+  },
+  {
+    "slug": "archives-design",
+    "name": "archives.design",
+    "host": "archives.design",
+    "url": "https://archives.design",
+    "note": "Graphic design from the Internet Archive, curated and easy to browse.",
+    "icon": "/icons/archives-design.webp"
+  },
+  {
+    "slug": "digitalcollections-nypl-org",
+    "name": "NYPL Digital Collections",
+    "host": "digitalcollections.nypl.org",
+    "url": "https://digitalcollections.nypl.org",
+    "note": "Maps, fashion plates and ephemera from the New York Public Library.",
+    "icon": "/icons/digitalcollections-nypl-org.webp"
+  },
+  {
+    "slug": "rijksmuseum-nl",
+    "name": "Rijksstudio",
+    "host": "rijksmuseum.nl",
+    "url": "https://www.rijksmuseum.nl/en/rijksstudio",
+    "note": "800,000 works from the Rijksmuseum, free to download at high resolution.",
+    "icon": "/icons/rijksmuseum-nl.webp"
   }
 ]
