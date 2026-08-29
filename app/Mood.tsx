@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Canvas, { type CanvasHandle } from "./Canvas";
+import Nav from "./Nav";
 import Search from "./Search";
 import Tools from "./Tools";
 import Viewer from "./Viewer";
@@ -55,6 +56,18 @@ export default function Mood() {
     () => (deck ? buildPlane(deck.items, SHAPE[mode].unit, SHAPE[mode].gap, mode) : null),
     [deck, mode]
   );
+
+  const pickMode = useCallback((next: Mode) => {
+    setMode((now) => {
+      if (now === next) return now;
+      try {
+        localStorage.setItem(MODE_KEY, next);
+      } catch {
+      }
+      track(OA_EVENTS.viewSwitch, { view: next });
+      return next;
+    });
+  }, []);
 
   const cycle = useCallback(() => {
     setMode((now) => {
@@ -184,6 +197,17 @@ export default function Mood() {
         />
       )}
 
+      <Nav
+        counts={deck.counts}
+        mode={mode}
+        onMode={pickMode}
+        onSearch={() => {
+          setSearching(true);
+          track(OA_EVENTS.searchOpen, { key: "nav" });
+        }}
+        rest={hint && !view && !searching}
+      />
+
       <Tools />
 
       <Hint show={hint && !view && !searching} counts={deck.counts} mode={mode} />
@@ -215,15 +239,18 @@ function Hint({ show, counts, mode }: { show: boolean; counts: Deck["counts"]; m
           borderRadius: 999,
           fontSize: 10.5,
           letterSpacing: "0.02em",
-          color: "rgb(255 255 255 / 0.7)",
+          color: "rgb(255 255 255 / 0.3)",
           background: "rgb(0 0 0 / 0.5)",
           backdropFilter: "blur(10px)",
           WebkitBackdropFilter: "blur(10px)",
         }}
       >
-        <span className="tnum">{counts.items.toLocaleString()}</span> images ·{" "}
-        <span className="tnum">{counts.videos}</span> videos · drag to move · pinch or ⌘scroll to
-        zoom · <kbd>/</kbd> to search · <kbd>v</kbd> for {mode === "grid" ? "infinity" : "grid"}
+        <span style={{ color: "rgb(255 255 255 / 0.9)" }}>
+          <span className="tnum">{counts.items.toLocaleString()}</span> images ·{" "}
+          <span className="tnum">{counts.videos}</span> videos.
+        </span>{" "}
+        Drag to move · pinch or ⌘scroll to zoom · <kbd>/</kbd> to search ·{" "}
+        <kbd>v</kbd> for {mode === "grid" ? "infinity" : "grid"}
       </p>
     </div>
   );

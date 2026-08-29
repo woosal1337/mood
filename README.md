@@ -16,13 +16,13 @@ Images and video from designers, studios and galleries, laid out on a plane that
 - One `requestAnimationFrame` loop owns the transform. Input never touches the DOM, so a pan costs one composited layer move.
 - The viewer grows out of the tile you clicked, and `object-fit` never changes during the move.
 - Search dims the plane instead of filtering it, because removing the misses would move the thing you were looking at.
-- A collapsible rail of reference sites in liquid glass, the only control that is always on screen.
+- A collapsible rail of reference sites in liquid glass, and a nav bar that leaves on the first pan and returns at the top edge.
 
 ## Stack
 
 - Next.js 16 (App Router), React 19, TypeScript, static export
 - Tailwind CSS 4 with a zero-chroma token layer in `app/globals.css`
-- Switzer and JetBrains Mono, self-hosted
+- The system font stack for the sans (real SF on a Mac), JetBrains Mono self-hosted for the numbers
 - Media on MinIO, self-hosted on igris, served from `media.chele.bi`
 - Deployed on Vercel
 

@@ -266,7 +266,7 @@ function Chrome({
             <p style={{ margin: 0, fontSize: 13, fontWeight: 500 }}>
               @{board.author}
               {board.authorName && (
-                <span style={{ marginLeft: 8, fontWeight: 400, color: "rgb(255 255 255 / 0.5)" }}>
+                <span style={{ marginLeft: 8, fontWeight: 400, color: "rgb(255 255 255 / 0.3)" }}>
                   {board.authorName}
                 </span>
               )}
@@ -277,7 +277,7 @@ function Chrome({
               style={{
                 margin: "3px 0 0",
                 fontSize: 12,
-                color: "rgb(255 255 255 / 0.55)",
+                color: "rgb(255 255 255 / 0.3)",
                 maxWidth: "56ch",
                 overflow: "hidden",
                 textOverflow: "ellipsis",

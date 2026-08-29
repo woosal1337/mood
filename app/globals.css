@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-@font-face { font-family:"Switzer"; src:url("/fonts/switzer-400.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
-@font-face { font-family:"Switzer"; src:url("/fonts/switzer-500.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; }
-@font-face { font-family:"Switzer"; src:url("/fonts/switzer-600.woff2") format("woff2"); font-weight:600; font-style:normal; font-display:swap; }
-@font-face { font-family:"Switzer"; src:url("/fonts/switzer-700.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:swap; }
 @font-face { font-family:"JetBrains Mono"; src:url("/fonts/jetbrains-mono-400.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
 @font-face { font-family:"JetBrains Mono"; src:url("/fonts/jetbrains-mono-500.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; }
 
@@ -103,7 +99,7 @@
   --color-overlay-line: var(--overlay-line);
   --color-accent: rgb(var(--accent));
 
-  --font-sans: "Switzer", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
@@ -124,7 +120,6 @@ body {
   color: var(--fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  font-feature-settings: "cv11", "ss01";
   margin: 0;
 }
 
@@ -407,4 +402,119 @@ input:focus-visible { outline: none; }
 
 @media (max-width: 520px) {
   .rail[data-open] { width: min(246px, calc(100vw - 32px)); }
+}
+
+.nav {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 40;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  height: 46px;
+  padding: 0 8px 0 16px;
+  border-radius: var(--radius);
+
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition:
+    opacity var(--dur-move) var(--ease-standard),
+    transform var(--dur-move) var(--ease-standard);
+}
+
+.nav[data-show] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.nav-mark {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  flex-shrink: 0;
+}
+
+.nav-strap {
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.2;
+  color: var(--fg-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-lead { color: var(--fg); font-weight: 500; }
+
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.nav-seg {
+  display: flex;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--s-3);
+}
+
+.nav-seg button {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--fg-3);
+  background: transparent;
+  transition:
+    color var(--dur-micro) var(--ease-standard),
+    background var(--dur-micro) var(--ease-standard);
+}
+
+.nav-seg button:hover { color: var(--fg-2); }
+.nav-seg button[data-on] { color: var(--fg); background: var(--s-5); }
+
+.nav-link {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: var(--fg-3);
+  background: transparent;
+  transition: color var(--dur-micro) var(--ease-standard);
+}
+
+.nav-link:hover { color: var(--fg); }
+
+.nav-count { font-size: 10.5px; color: var(--fg-4); }
+
+.nav-pill {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgb(var(--paper));
+  background: var(--fg);
+  text-decoration: none;
+  transition: opacity var(--dur-micro) var(--ease-standard);
+}
+
+.nav-pill:hover { opacity: 0.86; }
+
+@media (max-width: 900px) {
+  .nav-strap, .nav-count { display: none; }
+}
+
+@media (max-width: 620px) {
+  .nav-link { display: none; }
 }

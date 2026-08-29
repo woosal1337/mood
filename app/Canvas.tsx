@@ -143,6 +143,8 @@ export default forwardRef<CanvasHandle, Props>(function Canvas(
     const layer = layerRef.current;
     if (!pool || !layer) return;
 
+    pool.reset();
+
     let raf = 0;
     let clock = 0;
     let sx = cam.current.x;

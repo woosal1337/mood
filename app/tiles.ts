@@ -243,6 +243,12 @@ export function mountTiles(
       }
     },
 
+    reset() {
+      for (const n of live.values()) release(n);
+      live.clear();
+      seen.clear();
+    },
+
     rebase(x: number, y: number) {
       ox = x;
       oy = y;

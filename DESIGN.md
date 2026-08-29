@@ -285,6 +285,23 @@ background and as dirt over this one: the plane is arbitrary high-contrast
 imagery, so a panel that is too transparent goes blotchy rather than
 transparent.
 
+## 5c. The nav bar, and why it leaves
+
+Section 0 refuses any control that is always on the screen, and the rail already
+spends that exception. The nav bar does not spend a second one: it shows while
+the plane is at rest, it leaves on the first pan, and it comes back when the
+pointer crosses into the top 72px. So it is present exactly when a pointer is
+looking for it, and absent while someone is reading the images.
+
+It carries the wordmark, the strap, the view switch, search, the count and one
+link. The view switch is the only new control, and `v` does the same job without
+it, which is the rule: a feature earns a control only after it has a key.
+
+**The strap is two-tone.** The lead sentence sits at 0.90 and the rest at 0.30,
+which is the Atlas heading treatment. One sentence states the thing, the rest
+explains it and gets out of the way. The hint line at the bottom uses the same
+split, so the counts read first and the key list reads second.
+
 ## 5b. Where the media lives
 
 Media paths are never stored. Every file is named after its image id, so the
@@ -333,9 +350,15 @@ and form controls from `prefers-color-scheme` and never looks at `data-theme`.
 
 ## 7. Type
 
-Switzer and JetBrains Mono, self-hosted, weights 400 to 700 only. The hairline
-weights are absent from the subset on purpose. This product shows almost no
-type, so what it does show must be the same type the sibling repository uses.
+The system stack for the sans, JetBrains Mono self-hosted for the numbers.
+Switzer was here until 2026-08-29 and matched the sibling repository. The brief
+was to take the Atlas face, which is SF Pro Display. Apple does not license SF
+as a web font, so the stack asks for it by the name the OS already answers to:
+`-apple-system, BlinkMacSystemFont`. A Mac paints real SF. Windows paints Segoe.
+Nobody downloads 75 KB to read one hint line.
+
+The sans now costs zero bytes and zero requests, and it can never flash the
+wrong metrics, because the first paint uses a face the machine already holds.
 
 Numbers are tabular everywhere they can change: a counter that shifts width as
 it counts is a counter you cannot read.
