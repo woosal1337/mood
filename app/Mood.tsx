@@ -30,6 +30,7 @@ export default function Mood() {
   const [match, setMatch] = useState<Set<number> | null>(null);
   const [hint, setHint] = useState(true);
   const [mode, setMode] = useState<Mode>("infinity");
+  const [railOpen, setRailOpen] = useState(false);
 
   const canvas = useRef<CanvasHandle>(null);
 
@@ -206,9 +207,10 @@ export default function Mood() {
           track(OA_EVENTS.searchOpen, { key: "nav" });
         }}
         rest={hint && !view && !searching}
+        railOpen={railOpen}
       />
 
-      <Tools />
+      <Tools onOpen={setRailOpen} />
 
       <Hint show={hint && !view && !searching} counts={deck.counts} mode={mode} />
     </main>

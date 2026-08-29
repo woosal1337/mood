@@ -8,7 +8,7 @@ type Tool = { slug: string; name: string; host: string; url: string; note: strin
 
 const KEY = "mood.tools.open";
 
-export default function Tools() {
+export default function Tools({ onOpen }: { onOpen?: (open: boolean) => void }) {
   const list = tools as Tool[];
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
@@ -39,6 +39,10 @@ export default function Tools() {
     if (!ready) return;
     try { localStorage.setItem(KEY, open ? "1" : "0"); } catch {  }
   }, [open, ready]);
+
+  useEffect(() => {
+    onOpen?.(open);
+  }, [open, onOpen]);
 
   useEffect(() => {
     if (!open) return;

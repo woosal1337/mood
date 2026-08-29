@@ -12,9 +12,10 @@ type Props = {
   onMode: (next: Mode) => void;
   onSearch: () => void;
   rest: boolean;
+  railOpen: boolean;
 };
 
-export default function Nav({ counts, mode, onMode, onSearch, rest }: Props) {
+export default function Nav({ counts, mode, onMode, onSearch, rest, railOpen }: Props) {
   const [near, setNear] = useState(false);
 
   useEffect(() => {
@@ -28,12 +29,16 @@ export default function Nav({ counts, mode, onMode, onSearch, rest }: Props) {
 
   return (
     <nav className="nav glass-surface" data-show={rest || near || undefined}>
-      <span className="nav-mark">mood.</span>
+      {!railOpen && (
+        <>
+          <span className="nav-mark">mood.</span>
 
-      <span className="nav-strap">
-        <span className="nav-lead">Two ways to look.</span> Grid for scanning.
-        Infinity for losing yourself in it.
-      </span>
+          <span className="nav-strap">
+            <span className="nav-lead">Two ways to look.</span> Grid for scanning.
+            Infinity for losing yourself in it.
+          </span>
+        </>
+      )}
 
       <span className="nav-right">
         <span className="nav-seg" role="group" aria-label="View">
