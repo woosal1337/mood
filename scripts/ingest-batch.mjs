@@ -127,7 +127,7 @@ function board(post, images) {
 }
 
 async function bring(m, id) {
-  const isVideo = /\.mp4(\?|$)/i.test(m.url);
+  const isVideo = m.kind === "video" || Boolean(m.poster) || /\.mp4(\?|$)/i.test(m.url);
   const ext = isVideo ? ".mp4" : (/\.(jpe?g|png|webp|gif)(\?|$)/i.exec(m.url)?.[1] ? `.${RegExp.$1.toLowerCase()}` : ".jpg");
   const tiers = TIERS.map((t) => join(MEDIA, `${id}-${t.suffix}.webp`));
   const mp4 = join(VIDEO, `${id}.mp4`);
@@ -139,8 +139,12 @@ async function bring(m, id) {
   const still = join(scratch, `${id}-still.png`);
   if (isVideo && m.poster) {
     const p = join(scratch, `${id}-poster.jpg`);
-    writeFileSync(p, await download(m.poster));
-    await run("ffmpeg", ["-y", "-loglevel", "error", "-i", p, still]);
+    try {
+      writeFileSync(p, await download(m.poster));
+      await run("ffmpeg", ["-y", "-loglevel", "error", "-i", p, still]);
+    } catch {
+      await run("ffmpeg", ["-y", "-loglevel", "error", "-ss", "0.5", "-i", raw, "-frames:v", "1", still]);
+    }
   } else if (isVideo) {
     await run("ffmpeg", ["-y", "-loglevel", "error", "-ss", "0.5", "-i", raw, "-frames:v", "1", still]);
   } else {
