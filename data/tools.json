@@ -46,5 +46,29 @@
     "url": "https://logosystem.co",
     "note": "A library of logos and animated logos, filtered by colour, style and shape.",
     "icon": "/icons/logosystem-co.webp"
+  },
+  {
+    "slug": "bestdesignsonx-com",
+    "name": "Best Designs on X",
+    "host": "bestdesignsonx.com",
+    "url": "https://bestdesignsonx.com",
+    "note": "A curated feed of the best design work posted on X.",
+    "icon": "/icons/bestdesignsonx-com.webp"
+  },
+  {
+    "slug": "21st-dev",
+    "name": "21st.dev",
+    "host": "21st.dev",
+    "url": "https://21st.dev",
+    "note": "A library of React components, templates and themes.",
+    "icon": "/icons/21st-dev.webp"
+  },
+  {
+    "slug": "zhangsueellen-com",
+    "name": "Sue Ellen Zhang",
+    "host": "zhangsueellen.com",
+    "url": "https://www.zhangsueellen.com/generative",
+    "note": "Generative work by Sue Ellen Zhang.",
+    "icon": "/icons/zhangsueellen-com.webp"
   }
 ]
